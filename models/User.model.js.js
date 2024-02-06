@@ -19,23 +19,21 @@ const userSchema = new Schema(
       default: null,
     },
     tokens: {
-      type: [
-        {
-          accessToken: String,
-          refreshToken: String,
-        },
-      ],
+      type: {
+        accessToken: String,
+        refreshToken: String,
+      },
       _id: false,
       default: null,
     },
     password: {
       type: String,
     },
-    temp_otp:{
+    temp_otp: {
       type: Number,
       minlength: 4,
       maxlength: 6,
-    }
+    },
   },
   { collection: "user" },
   { strict: false }

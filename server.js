@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const user = require("./Routers/user.router");
+const public = require("./Routers/public.routes");
 
 const errorController = require("./Controllers/errorController");
 
@@ -19,7 +20,7 @@ const port = 4000 || process.env.PORT;
 mongoose
   .connect(process.env.MONGO_DB_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   })
   .then(() => {
     console.log("mongodb connected.");
@@ -33,6 +34,7 @@ app.get("/test", (req, res, next) => {
     // data: { id: savedPost._id },
   });
 });
+app.use("/", public);
 
 app.use("/user", user);
 

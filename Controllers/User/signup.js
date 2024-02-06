@@ -1,4 +1,4 @@
-const createHttpError = require("http-errors");
+const createError = require("http-errors");
 const User = require("../../models/User.model.js");
 const bcrypt = require("bcrypt");
 const smtp = require("../smtp");
@@ -22,7 +22,17 @@ module.exports = {
       }
       const accessToken = await signAccessToken(user);
       const refreshToken = await signRefreshToken(user);
-
+      await User.updateOne(
+        { email: email },
+        {
+          $set: {
+            tokens: {
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+            },
+          },
+        }
+      );
       res.json({
         success: true,
         message: "signin successful",
@@ -84,7 +94,7 @@ module.exports = {
       if (!user) {
         throw createHttpError.Conflict("Something went wrong !");
       }
-      if (user.temp_otp !== otp) {
+      if (parseInt(user.temp_otp) !== parseInt(otp)) {
         throw createHttpError.NotFound("Otp does not match");
       }
       await User.updateOne(
