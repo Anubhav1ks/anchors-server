@@ -77,6 +77,9 @@ router.get("/getUserurl", (req, res, next) => {
 router.post("/create/addurl", (req, res, next) => {
   Createurl(req, res, next);
 });
+router.post("/create/deleteurl", (req, res, next) => {
+  deleteeurl(req, res, next);
+});
 router.post("/create/editurl", (req, res, next) => {
   editurl(req, res, next);
 });

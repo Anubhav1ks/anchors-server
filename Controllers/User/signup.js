@@ -20,29 +20,38 @@ module.exports = {
       if (!passwordMatch) {
         throw createError.BadRequest("Wrong credentials");
       }
-      const accessToken = await signAccessToken(user);
-      const refreshToken = await signRefreshToken(user);
-      await User.updateOne(
-        { email: email },
-        {
-          $set: {
-            tokens: {
-              accessToken: accessToken,
-              refreshToken: refreshToken,
+
+      if (user.verify) {
+        const accessToken = await signAccessToken(user);
+        const refreshToken = await signRefreshToken(user);
+        await User.updateOne(
+          { email: email },
+          {
+            $set: {
+              tokens: {
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+              },
             },
+          }
+        );
+        res.json({
+          success: true,
+          message: "signin successful",
+          data: {
+            accessToken,
+            accessExpiry: 24,
+            refreshToken,
+            refreshExpiry: 720,
           },
-        }
-      );
-      res.json({
-        success: true,
-        message: "signin successful",
-        data: {
-          accessToken,
-          accessExpiry: 24,
-          refreshToken,
-          refreshExpiry: 720,
-        },
-      });
+        });
+      } else {
+        res.json({
+          success: false,
+          message: "not verify",
+          data: null,
+        });
+      }
     } catch (error) {
       console.log(error);
       next(error);

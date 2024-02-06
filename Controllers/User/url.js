@@ -123,22 +123,25 @@ module.exports = {
       const { id } = req.body;
       console.log(id);
       const url = await Url.findOne({ _id: id });
-      if (!url) throw createError.NotFound("url Does not exist");
-      const urldelete = Url.deleteMany({ _id: id });
-      if (urldelete) {
+      if (!url) throw createError.NotFound("URL does not exist");
+      
+      const result = await Url.deleteMany({ _id: id });
+      
+      if (result.deletedCount > 0) {
         return res.status(200).json({
           data: null,
           success: true,
           message: "Deleted Successfully",
         });
       } else {
-        createError.Conflict("Something went wrong!");
+        throw createError.Conflict("Something went wrong!");
       }
     } catch (error) {
       console.log(error);
       next(error);
     }
   },
+  
   editurl: async (req, res, next) => {
     try {
       console.log(req.body);
